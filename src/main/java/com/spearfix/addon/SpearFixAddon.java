@@ -8,6 +8,7 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import org.slf4j.Logger;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 
 /**
@@ -15,6 +16,10 @@ import java.lang.reflect.Method;
  *
  * 以 Java Agent + ASM 方式修復 DecoderHandler.decode 崩潰問題，
  * 當解碼異常時跳過錯誤封包，防止客戶端斷開連線。
+ *
+ * 使用方法：
+ *   在 JVM 參數加入 -javaagent:spearfix.jar
+ *   （例如在 PrismLauncher → 編輯執行個體 → Java 參數）
  */
 public class SpearFixAddon extends MeteorAddon {
     public static final String VERSION = "1.0.3";
@@ -24,10 +29,12 @@ public class SpearFixAddon extends MeteorAddon {
     @Override
     public void onInitialize() {
         LOG.info("Initializing SpearFix Addon v{}", VERSION);
+        LOG.info("Make sure to add -javaagent:spearfix.jar to your JVM arguments!");
 
-        // 嘗試透過 Instrumentation 註冊 ASM Transformer
-        // （若未以 -javaagent 啟動則無法取得 Instrumentation）
-        tryRegisterTransformer();
+        // 檢查是否有 -javaagent 已載入
+        if (!isAgentLoaded()) {
+            LOG.warn("SpearFix agent NOT detected. Please add -javaagent:spearfix.jar");
+        }
     }
 
     @Override
@@ -45,27 +52,14 @@ public class SpearFixAddon extends MeteorAddon {
         return new GithubRepo("benjamin920101", "Meteor-spearfix-plugin");
     }
 
-    /**
-     * 嘗試使用 Instrumentation API 註冊 ClassFileTransformer。
-     * 若 Agent 已透過 premain 註冊則跳過。
-     */
-    private static void tryRegisterTransformer() {
-        try {
-            // 透過 reflection 取得 Instrumentation 實例
-            // （Instrumentation 僅在 Java Agent 啟動時可用）
-            Class<?> instClass = Class.forName("java.lang.instrument.Instrumentation");
-            Method getInstrumentation = Class.forName("java.lang.instrument.Instruments")
-                    .getMethod("getInstrumentation");
-            Instrumentation inst = (Instrumentation) getInstrumentation.invoke(null);
-
-            if (inst != null) {
-                SpearFixAgent.register(inst);
-                LOG.info("SpearFixAgent transformer registered successfully");
+    /** 檢查 JVM 是否已載入 SpearFixAgent */
+    private static boolean isAgentLoaded() {
+        // 透過 ManagementFactory 看是否有 premain-class 參數
+        for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+            if (arg.contains("SpearFixAgent") || arg.contains("spearfix")) {
+                return true;
             }
-        } catch (Exception e) {
-            LOG.warn("Could not register ASM transformer via Instrumentation (not running as agent). " +
-                     "Use -javaagent:spearfix.jar for early transformation, " +
-                     "or ensure Mixin fallback is active.");
         }
+        return false;
     }
 }
