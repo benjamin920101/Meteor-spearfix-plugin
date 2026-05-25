@@ -13,6 +13,6 @@ public class AboutThisPlugin extends Module {
 
     @Override
     public void onActivate() {
-        ChatUtils.sendMsg(Text.literal("插件作者：benjamin9020101"));
+        ChatUtils.sendMsg(Text.literal("插件作者：benjamin920101"));
     }
 }
