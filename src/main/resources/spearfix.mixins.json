@@ -3,6 +3,7 @@
   "package": "com.spearfix.addon.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "ClientConnectionMixin"
   ],
   "injectors": {
     "defaultRequire": 1
