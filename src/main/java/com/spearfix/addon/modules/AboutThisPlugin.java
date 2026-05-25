@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 public class AboutThisPlugin extends Module {
 
     public AboutThisPlugin() {
-        super(TranslateAddon.CATEGORY, "关于插件", "插件作者：benjamin920101");
+        super(SpearFixAddon.CATEGORY, "关于插件", "插件作者：benjamin920101");
     }
 
     @Override
