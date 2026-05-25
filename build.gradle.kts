@@ -30,9 +30,12 @@ dependencies {
 
     // ASM — 提供 ClassReader / ClassWriter 等位元組碼操作 API
     // 用於 SpearFixAgent 的 decode() try-catch 植入
-    implementation("org.ow2.asm:asm:9.7.1")
-    implementation("org.ow2.asm:asm-commons:9.7.1")
-    implementation("org.ow2.asm:asm-tree:9.7.1")
+    // 使用 compileOnly 避免將 ASM 打包進 mod JAR。
+    // ASM 在執行期由 Minecraft 啟動器的 classpath 提供（Fabric Loader 依賴），
+    // 若重複打包會與系統 classloader 衝突導致 LinkageError。
+    compileOnly("org.ow2.asm:asm:9.7.1")
+    compileOnly("org.ow2.asm:asm-commons:9.7.1")
+    compileOnly("org.ow2.asm:asm-tree:9.7.1")
 }
 
 tasks {
@@ -59,11 +62,8 @@ tasks {
             rename { "${it}_${inputs.properties["archivesName"]}" }
         }
 
-        // Java Agent: 將 ASM 類別一併打包，使 premain 模式能正常運作
-        from(configurations.runtimeClasspath.get().map {
-            if (it.name.startsWith("asm-")) zipTree(it) else null
-        }.filterNotNull())
-
+        // Java Agent: ASM 由執行期 classpath 提供（Fabric Loader / 啟動器），
+        // 不再重複打包以避免 classloader 衝突。
         manifest {
             attributes(
                 "Premain-Class" to "com.spearfix.addon.SpearFixAgent",
