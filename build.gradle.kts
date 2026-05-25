@@ -27,6 +27,12 @@ dependencies {
 
     // Meteor
     modImplementation("meteordevelopment:meteor-client:${properties["minecraft_version"] as String}-SNAPSHOT")
+
+    // ASM — 提供 ClassReader / ClassWriter 等位元組碼操作 API
+    // 用於 SpearFixAgent 的 decode() try-catch 植入
+    implementation("org.ow2.asm:asm:9.7.1")
+    implementation("org.ow2.asm:asm-commons:9.7.1")
+    implementation("org.ow2.asm:asm-tree:9.7.1")
 }
 
 tasks {
@@ -50,6 +56,18 @@ tasks {
 
         from("LICENSE") {
             rename { "${it}_${inputs.properties["archivesName"]}" }
+        }
+
+        // Java Agent: 將 ASM 類別一併打包，使 premain 模式能正常運作
+        from(configurations.runtimeClasspath.get().map {
+            if (it.name.startsWith("asm-")) zipTree(it) else null
+        }.filterNotNull())
+
+        manifest {
+            attributes(
+                "Premain-Class" to "com.spearfix.addon.SpearFixAgent",
+                "Can-Retransform-Classes" to "true"
+            )
         }
     }
 
