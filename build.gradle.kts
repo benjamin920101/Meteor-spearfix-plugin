@@ -52,6 +52,7 @@ tasks {
     }
 
     jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         inputs.property("archivesName", project.base.archivesName.get())
 
         from("LICENSE") {
