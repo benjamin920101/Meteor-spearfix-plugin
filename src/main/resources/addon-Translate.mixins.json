@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.spearfix.addon.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "PacketDecoderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+  ]
+}
