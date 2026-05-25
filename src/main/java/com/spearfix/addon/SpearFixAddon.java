@@ -9,7 +9,7 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 
-public class TranslateAddon extends MeteorAddon {
+public class SpearFixAddon extends MeteorAddon {
     public static final String VERSION = "1.0.2";
     public static final Logger LOG = LogUtils.getLogger();
     public static final Category CATEGORY = new Category("SpearFix");
@@ -32,6 +32,6 @@ public class TranslateAddon extends MeteorAddon {
 
     @Override
     public GithubRepo getRepo() {
-        return new GithubRepo("dingzhen-vape", "Meteor-spearfix-plugin");
+        return new GithubRepo("benjamin920101", "Meteor-spearfix-plugin");
     }
 }
