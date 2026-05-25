@@ -2,7 +2,7 @@ package com.spearfix.addon.mixin;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.network.handler.PacketDecoder;
+import net.minecraft.network.handler.DecoderHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(PacketDecoder.class)
+@Mixin(DecoderHandler.class)
 public class PacketDecoderMixin {
     private static final Logger LOGGER = LoggerFactory.getLogger("SpearFix");
 

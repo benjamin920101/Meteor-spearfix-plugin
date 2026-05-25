@@ -1,7 +1,6 @@
 package com.spearfix.addon;
 
 import com.mojang.logging.LogUtils;
-import com.spearfix.addon.modules.AboutThisPlugin;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
