@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ClientConnectionMixin",
-    "PacketDecoderMixin"
+    "DecoderHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
