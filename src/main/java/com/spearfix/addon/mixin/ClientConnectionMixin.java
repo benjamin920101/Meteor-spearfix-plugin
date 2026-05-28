@@ -22,7 +22,15 @@ public abstract class ClientConnectionMixin {
     @Inject(method = "exceptionCaught", at = @At("HEAD"), cancellable = true)
     private void onExceptionCaught(ChannelHandlerContext ctx, Throwable ex, CallbackInfo ci) {
         if (ex instanceof DecoderException) {
-            SpearFixAddon.LOG.warn("[SpearFix] Suppressed DecoderException: {}", ex.getMessage());
+            String message = ex.getMessage();
+            // 如果是 "larger than expected"，且 PacketDecoderMixin 沒攔截到（例如在其他 handler 拋出），
+            // 我們依然攔截它但可以選擇不 log 或降低日誌等級。
+            if (message != null && message.contains("larger than I expected")) {
+                ci.cancel();
+                return;
+            }
+
+            SpearFixAddon.LOG.warn("[SpearFix] Suppressed DecoderException: {}", message);
             ci.cancel();
         }
     }

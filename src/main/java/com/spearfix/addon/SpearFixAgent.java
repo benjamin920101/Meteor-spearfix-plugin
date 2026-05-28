@@ -15,7 +15,7 @@ import org.objectweb.asm.*;
  */
 public class SpearFixAgent implements ClassFileTransformer {
 
-    private static final String TARGET_CLASS_MAPPED    = "net/minecraft/network/handler/DecoderHandler";
+    private static final String TARGET_CLASS_MAPPED    = "net/minecraft/network/handler/PacketDecoder";
     // obf name fallback for premain mode
     private static final String TARGET_CLASS_OBF       = "net/minecraft/class_2543";
 
