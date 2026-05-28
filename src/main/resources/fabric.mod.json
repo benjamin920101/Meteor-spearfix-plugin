@@ -5,7 +5,7 @@
   "name": "Meteor SpearFix Addon",
   "description": "为 Meteor 添加 SpearFix 支持",
   "authors": [
-    "kono_yalu"
+    "Benjamin"
   ],
   "contact": {
     "sources": "https://github.com/benjamin920101/Meteor-spearfix-plugin"
