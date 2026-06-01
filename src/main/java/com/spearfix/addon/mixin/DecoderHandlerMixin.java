@@ -6,6 +6,7 @@ import net.minecraft.network.handler.DecoderHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
@@ -32,6 +33,27 @@ public abstract class DecoderHandlerMixin {
         if (buf.readableBytes() > 0) {
             // 消耗剩餘位元組，避免 IOException("Packet ... was larger than I expected")
             buf.skipBytes(buf.readableBytes());
+        }
+    }
+
+    /**
+     * 攔截 list.add(packet) 調用。
+     * 如果後續 handler（如 PacketBundleHandler）在處理此封包時拋出異常，
+     * 我們在此處攔截它，防止異常回傳至 DecoderHandler 導致重複嘗試解碼相同位元組（進而引發 Timeout）。
+     */
+    @Redirect(
+        method = "decode",
+        at = @At(
+            value = "INVOKE",
+            target = "Ljava/util/List;add(Ljava/lang/Object;)Z"
+        )
+    )
+    private boolean onAddPacket(List<Object> list, Object packet) {
+        try {
+            return list.add(packet);
+        } catch (Throwable t) {
+            com.spearfix.addon.SpearFixAddon.LOG.warn("[SpearFix] Suppressed exception during packet processing: {}", t.getMessage());
+            return false;
         }
     }
 }
